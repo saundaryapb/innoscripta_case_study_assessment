@@ -1,0 +1,26 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
+
+:root {
+   --color-primary: #6366f1;
+   --color-success: #10b981;
+   --color-warning: #f59e0b;
+   --color-error: #ef4444;
+   --color-gray-100: #f3f4f6;
+   --color-gray-600: #4b5563;
+   --color-gray-900: #111827;
+   --color-white: #ffffff;
+}
+
+* {
+   margin: 0;
+   padding: 0;
+   box-sizing: border-box;
+}
+
+body {
+   font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+   font-weight: 400;
+   -webkit-font-smoothing: antialiased;
+   background-color: var(--color-gray-100);
+   color: var(--color-gray-900);
+}

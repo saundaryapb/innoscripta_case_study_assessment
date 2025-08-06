@@ -17,5 +17,5 @@ export interface User {
 export interface Route {
    name: string;
    path: string;
-   component?: React.ComponentType;
+   component: React.ReactElement;
 }
