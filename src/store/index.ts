@@ -1,8 +1,13 @@
 import { createStore, combineReducers } from 'redux';
+import sharedReducer from '../shared/reducer';
 
-export interface RootState {}
+export interface RootState {
+   shared: ReturnType<typeof sharedReducer>;
+}
 
-const rootReducer = combineReducers({});
+const rootReducer = combineReducers({
+   shared: sharedReducer,
+});
 
 const store = createStore(rootReducer);
 

@@ -8,14 +8,23 @@ export const mockFetchIssues = (): Promise<Issue[]> => {
    });
 };
 
-export const mockUpdateIssue = (issueId: string, updates: Partial<Issue>): Promise<Issue> => {
+interface MockApiOptions<T> {
+   response: T;
+   delay?: number;
+   shouldFail?: boolean;
+   errorMessage?: string;
+}
+
+export const mockApiCall = <T>(options: MockApiOptions<T>): Promise<T> => {
+   const { response, delay = 1000, shouldFail = false, errorMessage = 'Mock API Error' } = options;
+
    return new Promise((resolve, reject) => {
       setTimeout(() => {
-         if (Math.random() < 0.9) {
-            resolve({ id: issueId, ...updates } as Issue);
+         if (shouldFail) {
+            reject(new Error(errorMessage));
          } else {
-            reject(new Error('Failed to update issue'));
+            resolve(response);
          }
-      }, 500);
+      }, delay);
    });
 };
