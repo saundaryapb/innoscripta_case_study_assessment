@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import { Route as RouteType } from '../../../types';
 import { layoutStyles } from './styles';
 
@@ -15,6 +15,7 @@ const Layout: React.FC<LayoutProps> = ({ routes }) => {
                {routes.map((route) => (
                   <Route key={route.path} path={route.path} element={route.component} />
                ))}
+               <Route path="*" element={<Navigate to={routes[0]?.path || '/'} replace />} />
             </Routes>
          </div>
       </div>

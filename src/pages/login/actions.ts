@@ -8,10 +8,7 @@ export const USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS';
 export const USER_LOGIN_ERROR = 'USER_LOGIN_ERROR';
 
 export interface LoginApiResponse {
-   success: boolean;
    user: User;
-   token: string;
-   message: string;
 }
 
 export const userLoginLoading = () => ({
@@ -31,10 +28,7 @@ export const userLoginError = (error: string) => ({
 const loginApi = async (userData: User): Promise<LoginApiResponse> => {
    return await mockApiCall({
       response: {
-         success: true,
          user: userData,
-         token: 'mock-jwt-token-123',
-         message: 'Login successful',
       },
       delay: 3000,
    });

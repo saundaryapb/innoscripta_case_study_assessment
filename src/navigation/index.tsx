@@ -1,17 +1,23 @@
-import React, { FC, useState } from 'react';
+import React, { FC, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { PrivateLayout, PublicLayout } from '../layouts';
 import { CustomSpinner } from '../shared/components';
 import { useCustomStoreSelector } from '../hooks/useCustomStoreSelector';
-
-const useAuth = () => {
-   const [isAuth, setIsAuth] = useState(false);
-   return { isAuth, setIsAuth };
-};
+import { ROUTE_COLLECTION } from '../shared/constants';
 
 const Navigation: FC = () => {
-   const { isAuth } = useAuth();
+   const navigate = useNavigate();
    const sharedState = useCustomStoreSelector('shared');
+   const loginState = useCustomStoreSelector('login');
+   const isAuth = loginState.isAuth || localStorage.getItem('isAuth') === 'true';
    const isLoaderVisible = sharedState.loader.isVisible;
+
+   useEffect(() => {
+      if (loginState.isAuth) {
+         navigate(ROUTE_COLLECTION.BOARD);
+         localStorage.setItem('isAuth', 'true');
+      }
+   }, [loginState.isAuth, navigate]);
 
    return (
       <>

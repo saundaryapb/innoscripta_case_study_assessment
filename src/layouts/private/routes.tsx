@@ -9,6 +9,11 @@ export const privateRoutes: Route[] = [
       component: <Board />,
    },
    {
+      name: 'Issue',
+      path: ROUTE_COLLECTION.ISSUE,
+      component: <Issue />,
+   },
+   {
       name: 'Issue Detail',
       path: ROUTE_COLLECTION.ISSUE_DETAIL,
       component: <Issue />,
