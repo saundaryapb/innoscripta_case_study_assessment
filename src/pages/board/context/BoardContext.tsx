@@ -1,10 +1,21 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import { BOARD_ACTION_TYPES } from '../constants';
 
-interface BoardState {
-   data: any;
+interface BoardData {
+   issues?: any[];
+   issueSearched?: string;
+   selectedAssignees?: string[];
+   selectedSeverities?: string[];
 }
 
-type BoardAction = { type: 'SET_DATA'; payload: any };
+interface BoardState {
+   data: BoardData;
+}
+
+type BoardAction =
+   | { type: BOARD_ACTION_TYPES.SET_DATA; payload: BoardData }
+   | { type: BOARD_ACTION_TYPES.UPDATE_DATA; key: keyof BoardData; payload: any }
+   | { type: BOARD_ACTION_TYPES.CLEAR_FILTERS };
 
 interface BoardContextType {
    state: BoardState;
@@ -12,13 +23,33 @@ interface BoardContextType {
 }
 
 const initialState: BoardState = {
-   data: null,
+   data: {
+      issues: [],
+      issueSearched: '',
+      selectedAssignees: [],
+      selectedSeverities: [],
+   },
 };
 
 const boardReducer = (state: BoardState, action: BoardAction): BoardState => {
    switch (action.type) {
-      case 'SET_DATA':
-         return { ...state, data: action.payload };
+      case BOARD_ACTION_TYPES.SET_DATA:
+         return { ...state, data: { ...state.data, ...action.payload } };
+      case BOARD_ACTION_TYPES.UPDATE_DATA:
+         return {
+            ...state,
+            data: { ...state.data, [action.key]: action.payload },
+         };
+      case BOARD_ACTION_TYPES.CLEAR_FILTERS:
+         return {
+            ...state,
+            data: {
+               ...state.data,
+               issueSearched: '',
+               selectedAssignees: [],
+               selectedSeverities: [],
+            },
+         };
       default:
          return state;
    }

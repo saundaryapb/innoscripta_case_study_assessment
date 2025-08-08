@@ -1,66 +1,63 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { CustomInputText, CustomDropdown, CustomButton } from '../../../shared/components';
-import { Assignee, Priority } from '../../../shared/constants';
 import { boardStyles } from './styles';
+import { FILTER_HANDLE_CHANGE_ACTIONS } from '../constants';
 
-const Filter: React.FC = () => {
-   const [searchValue, setSearchValue] = useState('');
-   const [selectedAssignees, setSelectedAssignees] = useState<string[]>([]);
-   const [selectedSeverities, setSelectedSeverities] = useState<string[]>([]);
+interface FilterProps {
+   handleChange: (actionType: string, value?: any) => void;
+   searchValue: string;
+   selectedAssignees: string[];
+   selectedSeverities: string[];
+   assigneeOptions: { value: string; label: string }[];
+   severityOptions: { value: string; label: string }[];
+}
 
-   const assigneeOptions = Object.values(Assignee).map((assignee) => ({
-      value: assignee,
-      label: assignee.charAt(0).toUpperCase() + assignee.slice(1),
-   }));
-
-   const severityOptions = Object.values(Priority).map((priority) => ({
-      value: priority,
-      label: priority.charAt(0).toUpperCase() + priority.slice(1),
-   }));
-
-   const handleClearFilters = () => {
-      setSearchValue('');
-      setSelectedAssignees([]);
-      setSelectedSeverities([]);
-   };
-
+const Filter: React.FC<FilterProps> = ({
+   handleChange,
+   searchValue,
+   selectedAssignees,
+   selectedSeverities,
+   assigneeOptions,
+   severityOptions,
+}) => {
    return (
       <div style={boardStyles.filterContainer}>
          <div style={boardStyles.filterRow}>
-            {/* Search Input */}
             <div style={boardStyles.filterField}>
                <CustomInputText
                   label="Search Issues"
                   placeholder="Search by title, description..."
                   value={searchValue}
-                  handleChange={(e) => setSearchValue(e.target.value)}
+                  handleChange={(e) => handleChange(FILTER_HANDLE_CHANGE_ACTIONS.SEARCH_ISSUES, e.target.value)}
                />
             </div>
 
-            {/* Assignees Dropdown */}
             <div style={boardStyles.filterFieldSmall}>
                <CustomDropdown
                   label="Assignees"
                   multiple
                   value={selectedAssignees}
                   options={assigneeOptions}
-                  handleChange={(value) => setSelectedAssignees(value as string[])}
+                  handleChange={(value) => handleChange(FILTER_HANDLE_CHANGE_ACTIONS.SET_ASSIGNEES, value)}
                />
             </div>
 
-            {/* Severities Dropdown */}
             <div style={boardStyles.filterFieldSmall}>
                <CustomDropdown
                   label="Priorities"
                   multiple
                   value={selectedSeverities}
                   options={severityOptions}
-                  handleChange={(value) => setSelectedSeverities(value as string[])}
+                  handleChange={(value) => handleChange(FILTER_HANDLE_CHANGE_ACTIONS.SET_SEVERITIES, value)}
                />
             </div>
 
             <div style={{ marginBottom: '5px' }}>
-               <CustomButton label="Clear Filters" variant="secondary" handleClick={handleClearFilters} />
+               <CustomButton
+                  label="Clear Filters"
+                  variant="secondary"
+                  handleClick={() => handleChange(FILTER_HANDLE_CHANGE_ACTIONS.CLEAR_FILTERS)}
+               />
             </div>
          </div>
       </div>
