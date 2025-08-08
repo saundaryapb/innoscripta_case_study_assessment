@@ -4,7 +4,7 @@ import { useBoardContext } from '../context';
 import { mockFetchIssues } from '../../../utils/api';
 import { BOARD_ACTION_TYPES } from '../constants';
 import { Issue } from '../../../types';
-import { structureDataByPriority, getNextBatchIndex } from '../helpers';
+import { structureDataByStatus, getNextBatchIndex } from '../helpers';
 
 const Content: React.FC = () => {
    const { state, dispatch } = useBoardContext();
@@ -15,7 +15,7 @@ const Content: React.FC = () => {
 
    const updateContentData = useCallback(
       (data: Issue[]) => {
-         const structuredData = structureDataByPriority(data);
+         const structuredData = structureDataByStatus(data);
          dispatch({
             type: BOARD_ACTION_TYPES.UPDATE_DATA,
             key: 'contentData',

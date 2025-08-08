@@ -3,9 +3,11 @@ import { BOARD_ACTION_TYPES } from '../constants';
 import { Issue } from '../../../types';
 
 interface ContentData {
-   low: Issue[];
-   medium: Issue[];
-   high: Issue[];
+   backlog: Issue[];
+   todo: Issue[];
+   inProgress: Issue[];
+   inReview: Issue[];
+   done: Issue[];
 }
 
 interface BoardData {
@@ -37,9 +39,11 @@ const initialState: BoardState = {
       selectedAssignees: [],
       selectedSeverities: [],
       contentData: {
-         low: [],
-         medium: [],
-         high: [],
+         backlog: [],
+         todo: [],
+         inProgress: [],
+         inReview: [],
+         done: [],
       },
    },
 };

@@ -1,5 +1,5 @@
 import { Issue } from '../../types';
-import { Priority } from '../../shared/constants';
+import { IssueStatus } from '../../shared/constants';
 
 export const createOptionsFromEnum = (enumObject: Record<string, string>) => {
    return Object.values(enumObject).map((value) => ({
@@ -8,11 +8,13 @@ export const createOptionsFromEnum = (enumObject: Record<string, string>) => {
    }));
 };
 
-export const structureDataByPriority = (issues: Issue[]) => {
+export const structureDataByStatus = (issues: Issue[]) => {
    return {
-      low: issues.filter((issue) => issue.priority === Priority.LOW),
-      medium: issues.filter((issue) => issue.priority === Priority.MEDIUM),
-      high: issues.filter((issue) => issue.priority === Priority.HIGH),
+      backlog: issues.filter((issue) => issue.status === IssueStatus.BACKLOG),
+      todo: issues.filter((issue) => issue.status === IssueStatus.TODO),
+      inProgress: issues.filter((issue) => issue.status === IssueStatus.IN_PROGRESS),
+      inReview: issues.filter((issue) => issue.status === IssueStatus.IN_REVIEW),
+      done: issues.filter((issue) => issue.status === IssueStatus.DONE),
    };
 };
 
