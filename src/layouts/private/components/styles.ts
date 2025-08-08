@@ -6,6 +6,7 @@ export const headerStyles = {
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
    },
    title: {
       margin: 0,

@@ -1,3 +1,4 @@
-import Board from './Board';
+import BoardComponent from './Board';
+import FilterComponent from './Filter';
 
-export default Board;
+export { BoardComponent, FilterComponent };

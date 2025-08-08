@@ -1,3 +1,4 @@
 import Board from './Board';
+import Filter from './Filter';
 
-export default Board;
+export { Board, Filter };

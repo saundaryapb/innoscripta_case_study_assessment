@@ -1,8 +1,13 @@
 import React from 'react';
-import BoardComponent from '../components';
+import { BoardProvider } from '../context';
+import { BoardComponent } from '../components';
 
 const Board: React.FC = () => {
-   return <BoardComponent />;
+   return (
+      <BoardProvider>
+         <BoardComponent />
+      </BoardProvider>
+   );
 };
 
 export default Board;
