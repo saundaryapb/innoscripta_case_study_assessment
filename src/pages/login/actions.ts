@@ -6,6 +6,7 @@ import { User } from '../../types';
 export const USER_LOGIN_LOADING = 'USER_LOGIN_LOADING';
 export const USER_LOGIN_SUCCESS = 'USER_LOGIN_SUCCESS';
 export const USER_LOGIN_ERROR = 'USER_LOGIN_ERROR';
+export const USER_LOGOUT = 'USER_LOGOUT';
 
 export interface LoginApiResponse {
    user: User;
@@ -23,6 +24,10 @@ export const userLoginSuccess = (data: LoginApiResponse) => ({
 export const userLoginError = (error: string) => ({
    type: USER_LOGIN_ERROR,
    payload: error,
+});
+
+export const userLogout = () => ({
+   type: USER_LOGOUT,
 });
 
 const loginApi = async (userData: User): Promise<LoginApiResponse> => {
@@ -49,5 +54,12 @@ export const userLogin = (userData: User) => {
          dispatch(userLoginError(errorMessage));
          dispatch(setLoaderVisibility(false));
       }
+   };
+};
+
+export const logoutUser = () => {
+   return async (dispatch: Dispatch) => {
+      dispatch(userLogout());
+      dispatch(setLoaderVisibility(false));
    };
 };

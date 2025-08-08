@@ -1,4 +1,4 @@
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { PrivateLayout, PublicLayout } from '../layouts';
 import { CustomSpinner } from '../shared/components';
@@ -16,8 +16,9 @@ const Navigation: FC = () => {
       if (loginState.isAuth) {
          navigate(ROUTE_COLLECTION.BOARD);
          localStorage.setItem('isAuth', 'true');
+         localStorage.setItem('userData', JSON.stringify(loginState.data || {}));
       }
-   }, [loginState.isAuth, navigate]);
+   }, [loginState.isAuth, loginState.data, navigate]);
 
    return (
       <>

@@ -1,3 +1,3 @@
-import LayoutComponent from "./Layout";
+import LayoutComponent from './Layout';
 
 export default LayoutComponent;

@@ -1,4 +1,4 @@
-import { USER_LOGIN_LOADING, USER_LOGIN_SUCCESS, USER_LOGIN_ERROR, LoginApiResponse } from './actions';
+import { USER_LOGIN_LOADING, USER_LOGIN_SUCCESS, USER_LOGIN_ERROR, USER_LOGOUT, LoginApiResponse } from './actions';
 
 interface LoginState {
    loading: boolean;
@@ -42,6 +42,15 @@ const loginReducer = (state = initialState, action: any): LoginState => {
             data: {},
             success: false,
             error: true,
+            isAuth: false,
+         };
+      }
+      case USER_LOGOUT: {
+         return {
+            loading: false,
+            data: {},
+            success: false,
+            error: false,
             isAuth: false,
          };
       }
