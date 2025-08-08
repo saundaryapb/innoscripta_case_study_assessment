@@ -1,5 +1,5 @@
 import React from 'react';
-import { Filter } from '../containers';
+import { Content, Filter } from '../containers';
 import { CustomCard } from '../../../shared/components';
 import { boardStyles } from './styles';
 
@@ -20,7 +20,7 @@ const Board: React.FC = () => {
          </div>
 
          <div style={boardStyles.contentSection}>
-            <div style={boardStyles.placeholder}>Board content</div>
+            <Content />
          </div>
       </div>
    );

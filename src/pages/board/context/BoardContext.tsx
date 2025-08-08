@@ -1,11 +1,19 @@
 import React, { createContext, useContext, useReducer, ReactNode } from 'react';
 import { BOARD_ACTION_TYPES } from '../constants';
+import { Issue } from '../../../types';
+
+interface ContentData {
+   low: Issue[];
+   medium: Issue[];
+   high: Issue[];
+}
 
 interface BoardData {
-   issues?: any[];
+   issues?: Issue[];
    issueSearched?: string;
    selectedAssignees?: string[];
    selectedSeverities?: string[];
+   contentData?: ContentData;
 }
 
 interface BoardState {
@@ -28,6 +36,11 @@ const initialState: BoardState = {
       issueSearched: '',
       selectedAssignees: [],
       selectedSeverities: [],
+      contentData: {
+         low: [],
+         medium: [],
+         high: [],
+      },
    },
 };
 
