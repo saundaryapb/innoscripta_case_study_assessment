@@ -76,4 +76,159 @@ export const boardStyles: { [key: string]: CSSProperties } = {
       alignItems: 'center',
       gap: '12px',
    },
+
+   // Kanban Board Styles
+   kanbanContainer: {
+      padding: '20px',
+   },
+
+   kanbanTitle: {
+      textAlign: 'center' as const,
+      marginBottom: '24px',
+      color: '#333',
+      fontSize: '24px',
+      fontWeight: '600',
+   },
+
+   kanbanBoard: {
+      display: 'flex',
+      gap: '16px',
+      minHeight: '600px',
+      overflow: 'auto',
+   },
+
+   kanbanColumn: {
+      flex: 1,
+      minHeight: '500px',
+      backgroundColor: '#f5f5f5',
+      borderRadius: '8px',
+      padding: '16px',
+      margin: '0 8px',
+   },
+
+   kanbanColumnHeader: {
+      marginBottom: '16px',
+      textAlign: 'center' as const,
+      color: '#333',
+      borderBottom: '2px solid #ddd',
+      paddingBottom: '8px',
+      fontSize: '16px',
+      fontWeight: '600',
+   },
+
+   kanbanColumnContent: {
+      display: 'flex',
+      flexDirection: 'column' as const,
+      gap: '8px',
+   },
+
+   issueCard: {
+      backgroundColor: 'white',
+      border: '1px solid #ddd',
+      borderRadius: '6px',
+      padding: '12px',
+      cursor: 'grab',
+      boxShadow: '0 2px 4px rgba(0,0,0,0.1)',
+      transition: 'all 0.2s ease',
+   },
+
+   issueCardDragging: {
+      opacity: 0.5,
+      transform: 'rotate(5deg)',
+   },
+
+   issueHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '8px',
+   },
+
+   issueId: {
+      fontSize: '12px',
+      fontWeight: 'bold',
+      color: '#666',
+   },
+
+   priorityIndicator: {
+      display: 'inline-block',
+      width: '12px',
+      height: '12px',
+      borderRadius: '50%',
+   },
+
+   issueTitle: {
+      margin: '0 0 8px 0',
+      fontSize: '14px',
+      color: '#333',
+      fontWeight: '500',
+      lineHeight: '1.4',
+   },
+
+   issueFooter: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      fontSize: '12px',
+      color: '#666',
+   },
+
+   issueMetadata: {
+      marginTop: '8px',
+      fontSize: '12px',
+      color: '#666',
+   },
+
+   issueCreatedDate: {
+      marginBottom: '6px',
+      fontWeight: '500',
+   },
+
+   tagsContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: '4px',
+      alignItems: 'center',
+   },
+
+   tagsLabel: {
+      marginRight: '6px',
+      fontWeight: '600',
+      color: '#555',
+   },
+
+   tagItem: {
+      backgroundColor: '#f8f9ff',
+      color: '#4c63d2',
+      padding: '3px 8px',
+      borderRadius: '16px',
+      fontSize: '10px',
+      fontWeight: '600',
+      border: '1px solid #e1e5ff',
+      textTransform: 'uppercase' as const,
+      letterSpacing: '0.5px',
+   },
+
+   moveButton: {
+      marginTop: '8px',
+      width: '100%',
+      padding: '6px 12px',
+      fontSize: '12px',
+      backgroundColor: '#1890ff',
+      color: 'white',
+      border: 'none',
+      borderRadius: '4px',
+      cursor: 'pointer',
+      fontWeight: '500',
+      transition: 'background-color 0.2s ease',
+   },
+
+   loadingContainer: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      height: '400px',
+      fontSize: '18px',
+      color: '#666',
+   },
 };

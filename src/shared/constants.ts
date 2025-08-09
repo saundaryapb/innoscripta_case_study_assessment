@@ -11,6 +11,13 @@ export enum Priority {
    LOW = 'low',
 }
 
+export enum PriorityColor {
+   HIGH = '#ff4d4f',
+   MEDIUM = '#faad14',
+   LOW = '#52c41a',
+   DEFAULT = '#d9d9d9',
+}
+
 export enum IssueStatus {
    BACKLOG = 'Backlog',
    TODO = 'Todo',

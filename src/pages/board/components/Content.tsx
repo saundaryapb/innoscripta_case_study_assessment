@@ -1,7 +1,153 @@
 import React from 'react';
+import { DndContext, DragEndEvent, closestCenter, useDraggable, useDroppable } from '@dnd-kit/core';
+import { Issue } from '../../../types';
+import { CustomButton, CustomCard } from '../../../shared/components';
+import { KANBAN_COLUMNS, BOARD_HANDLE_CHANGE_ACTIONS } from '../constants';
+import {
+   getPriorityColor,
+   getNextStatusFromStatusString,
+   getColumnStyle,
+   getCardStyle,
+   formatCreatedDate,
+} from '../helpers';
+import { boardStyles } from './styles';
 
-const Content: React.FC = () => {
-   return <div style={{ padding: '20px' }}>test </div>;
+interface ContentData {
+   backlog: Issue[];
+   todo: Issue[];
+   inProgress: Issue[];
+   inReview: Issue[];
+   done: Issue[];
+}
+
+interface ContentProps {
+   data?: ContentData;
+   handleChange: (actionType: string, payload?: any) => void;
+}
+
+const DroppableColumn: React.FC<{
+   id: string;
+   title: string;
+   issues: Issue[];
+   handleChange: (actionType: string, payload?: any) => void;
+}> = ({ id, title, issues, handleChange }) => {
+   const { isOver, setNodeRef } = useDroppable({
+      id,
+   });
+
+   const columnStyle = getColumnStyle(boardStyles.kanbanColumn, isOver);
+
+   return (
+      <div ref={setNodeRef} style={columnStyle}>
+         <h3 style={boardStyles.kanbanColumnHeader}>
+            {title} ({issues.length})
+         </h3>
+
+         <div style={boardStyles.kanbanColumnContent}>
+            {issues.map((issue) => (
+               <IssueCard key={issue.id} issue={issue} handleChange={handleChange} />
+            ))}
+         </div>
+      </div>
+   );
+};
+
+const IssueCard: React.FC<{
+   issue: Issue;
+   handleChange: (actionType: string, payload?: any) => void;
+}> = ({ issue, handleChange }) => {
+   const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
+      id: issue.id,
+   });
+
+   const nextStatus = getNextStatusFromStatusString(issue.status);
+   const cardStyle = getCardStyle(boardStyles.issueCard, isDragging, transform);
+
+   const handleMoveClick = () => {
+      if (nextStatus) {
+         handleChange(BOARD_HANDLE_CHANGE_ACTIONS.MOVE_ISSUE, { issueId: issue.id, newStatus: nextStatus });
+      }
+   };
+
+   return (
+      <div ref={setNodeRef} style={cardStyle} {...listeners} {...attributes}>
+         <CustomCard>
+            <div style={boardStyles.issueHeader}>
+               <span style={boardStyles.issueId}>#{issue.id}</span>
+               <span
+                  style={{
+                     ...boardStyles.priorityIndicator,
+                     backgroundColor: getPriorityColor(issue.priority),
+                  }}
+               />
+            </div>
+
+            <h4 style={boardStyles.issueTitle}>{issue.title}</h4>
+
+            <div style={boardStyles.issueFooter}>
+               <span>@{issue.assignee}</span>
+               <span>Severity: {issue.severity}</span>
+            </div>
+
+            <div style={boardStyles.issueMetadata}>
+               <div style={boardStyles.issueCreatedDate}>Created: {formatCreatedDate(issue.createdAt)}</div>
+               <div style={boardStyles.tagsContainer}>
+                  <span style={boardStyles.tagsLabel}>Tags:</span>
+                  {issue.tags.map((tag, index) => (
+                     <span key={index} style={boardStyles.tagItem}>
+                        {tag}
+                     </span>
+                  ))}
+               </div>
+            </div>
+
+            {nextStatus && (
+               <CustomButton
+                  handleClick={handleMoveClick}
+                  style={boardStyles.moveButton}
+                  variant="primary"
+                  label={`Move to ${nextStatus}`}
+                  stopPropagation={true}
+               />
+            )}
+         </CustomCard>
+      </div>
+   );
+};
+
+const Content: React.FC<ContentProps> = ({ data, handleChange }) => {
+   if (!data) {
+      return <div style={boardStyles.loadingContainer}>Loading Kanban Board...</div>;
+   }
+
+   const handleDragEnd = (event: DragEndEvent) => {
+      handleChange(BOARD_HANDLE_CHANGE_ACTIONS.DRAG_END, event);
+   };
+
+   const columns = KANBAN_COLUMNS.map((column) => ({
+      ...column,
+      issues: data[column.key],
+   }));
+
+   return (
+      <div style={boardStyles.kanbanContainer}>
+         <h2 style={boardStyles.kanbanTitle}>Project Board</h2>
+
+         <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+            <div style={boardStyles.kanbanBoard}>
+               {columns.map((column) => (
+                  <DroppableColumn
+                     key={column.id}
+                     id={column.id}
+                     title={column.title}
+                     issues={column.issues}
+                     handleChange={handleChange}
+                  />
+               ))}
+            </div>
+         </DndContext>
+      </div>
+   );
 };
 
 export default Content;
