@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useBoardContext } from '../context';
 import { mockFetchIssues } from '../../../utils/api';
 import { BOARD_ACTION_TYPES, API_CONFIG, BOARD_HANDLE_CHANGE_ACTIONS } from '../constants';
@@ -10,6 +11,7 @@ const Content: React.FC = () => {
    const { state, dispatch } = useBoardContext();
    const { data } = state;
    const { contentData } = data;
+   const navigate = useNavigate();
 
    const allIssuesRef = useRef<Issue[]>([]);
    const contentDataRef = useRef<Issue[]>([]);
@@ -129,11 +131,16 @@ const Content: React.FC = () => {
                });
                break;
 
+            case BOARD_HANDLE_CHANGE_ACTIONS.OPEN_ISSUE:
+               const { issue } = payload;
+               navigate(`/issue/${issue.id}`, { state: { data: issue } });
+               break;
+
             default:
                console.warn('Unknown action type:', actionType);
          }
       },
-      [contentData, dispatch]
+      [contentData, dispatch, navigate]
    );
 
    return <ContentComponent data={data?.filteredIssues} handleChange={handleChange} user={user} />;

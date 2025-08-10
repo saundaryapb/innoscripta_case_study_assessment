@@ -107,6 +107,14 @@ const IssueCard: React.FC<{
                </div>
             </div>
 
+            <CustomButton
+               handleClick={() => handleChange(BOARD_HANDLE_CHANGE_ACTIONS.OPEN_ISSUE, { issue })}
+               style={boardStyles.moveButton}
+               variant="primary"
+               label={`Open Issue`}
+               stopPropagation={true}
+            />
+
             {nextStatus && isAdminUser(user) && (
                <CustomButton
                   handleClick={handleMoveClick}
