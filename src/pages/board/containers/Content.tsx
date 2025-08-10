@@ -6,7 +6,7 @@ import { useBoardContext } from '../context';
 import { mockFetchIssues } from '../../../utils/api';
 import { BOARD_ACTION_TYPES, API_CONFIG, BOARD_HANDLE_CHANGE_ACTIONS } from '../constants';
 import { Issue } from '../../../types';
-import { getStatusFromContainerId, filterAndStructureIssues } from '../helpers';
+import { getStatusFromContainerId, filterAndStructureIssues, addVisitedIssue, getVisitedIssues } from '../helpers';
 import { ContentComponent } from '../components';
 import { useCustomStoreSelector } from '../../../hooks/useCustomStoreSelector';
 import { getUserFromStorage } from '../../../shared/helpers';
@@ -30,6 +30,8 @@ const Content: React.FC = () => {
       previousStatus: string;
       message: string;
    } | null>(null);
+   const [visitedIssues, setVisitedIssues] = useState(() => getVisitedIssues());
+   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
    const user = useMemo(() => getUserFromStorage(), []);
 
@@ -170,7 +172,18 @@ const Content: React.FC = () => {
 
             case BOARD_HANDLE_CHANGE_ACTIONS.OPEN_ISSUE:
                const { issue } = payload;
+               addVisitedIssue({
+                  id: issue.id,
+                  title: issue.title,
+                  status: issue.status,
+               });
+               setVisitedIssues(getVisitedIssues());
                navigate(`/issue/${issue.id}`, { state: { data: issue } });
+               break;
+
+            case BOARD_HANDLE_CHANGE_ACTIONS.HANDLE_SIDEBAR:
+               const { isOpen } = payload;
+               setIsSidebarOpen(isOpen);
                break;
 
             default:
@@ -187,6 +200,8 @@ const Content: React.FC = () => {
          user={user}
          showUndo={showUndo}
          undoMessage={undoData?.message || ''}
+         visitedIssues={visitedIssues}
+         isSidebarOpen={isSidebarOpen}
       />
    );
 };

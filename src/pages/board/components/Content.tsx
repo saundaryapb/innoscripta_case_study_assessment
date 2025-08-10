@@ -1,7 +1,7 @@
 import React from 'react';
 import { DndContext, DragEndEvent, closestCenter, useDraggable, useDroppable } from '@dnd-kit/core';
 import { Issue } from '../../../types';
-import { CustomButton, CustomCard, CustomSnackbar } from '../../../shared/components';
+import { CustomButton, CustomCard, CustomSidebar, CustomSnackbar } from '../../../shared/components';
 import { KANBAN_COLUMNS, BOARD_HANDLE_CHANGE_ACTIONS } from '../constants';
 import {
    getPriorityColor,
@@ -11,8 +11,10 @@ import {
    isAdminUser,
    getDragProps,
    getCardStyleWithRole,
+   VisitedIssue,
 } from '../helpers';
 import { boardStyles } from './styles';
+import RecentlyVisited from './RecentlyVisited';
 
 interface ContentData {
    backlog: Issue[];
@@ -28,6 +30,8 @@ interface ContentProps {
    handleChange: (actionType: string, payload?: any) => void;
    showUndo?: boolean;
    undoMessage?: string;
+   visitedIssues?: VisitedIssue[];
+   isSidebarOpen?: boolean;
 }
 
 const DroppableColumn: React.FC<{
@@ -131,7 +135,15 @@ const IssueCard: React.FC<{
    );
 };
 
-const Content: React.FC<ContentProps> = ({ data, user, handleChange, showUndo = false, undoMessage = '' }) => {
+const Content: React.FC<ContentProps> = ({
+   data,
+   user,
+   handleChange,
+   showUndo = false,
+   undoMessage = '',
+   visitedIssues = [],
+   isSidebarOpen = false,
+}) => {
    if (!data) {
       return <div style={boardStyles.loadingContainer}>Loading Kanban Board...</div>;
    }
@@ -147,7 +159,14 @@ const Content: React.FC<ContentProps> = ({ data, user, handleChange, showUndo = 
 
    return (
       <div style={boardStyles.kanbanContainer}>
-         <h2 style={boardStyles.kanbanTitle}>Project Board</h2>
+         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h2 style={boardStyles.kanbanTitle}>Project Board</h2>
+            <CustomButton
+               label="Recently Visited"
+               variant="secondary"
+               handleClick={() => handleChange(BOARD_HANDLE_CHANGE_ACTIONS.HANDLE_SIDEBAR, { isOpen: true })}
+            />
+         </div>
 
          <DndContext collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
             <div style={boardStyles.kanbanBoard}>
@@ -183,6 +202,15 @@ const Content: React.FC<ContentProps> = ({ data, user, handleChange, showUndo = 
                }}
             />
          )}
+
+         <CustomSidebar
+            isOpen={isSidebarOpen}
+            onClose={() => handleChange(BOARD_HANDLE_CHANGE_ACTIONS.HANDLE_SIDEBAR, { isOpen: false })}
+            title="Recently Visited Issues"
+            style={boardStyles.sidebar}
+         >
+            <RecentlyVisited visitedIssues={visitedIssues} />
+         </CustomSidebar>
       </div>
    );
 };

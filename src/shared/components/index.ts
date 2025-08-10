@@ -4,5 +4,6 @@ import CustomInputText from './InputText';
 import CustomSpinner from './Spinner';
 import CustomDropdown from './Dropdown';
 import CustomSnackbar from './Snackbar';
+import CustomSidebar from './Sidebar';
 
-export { CustomButton, CustomCard, CustomSpinner, CustomInputText, CustomDropdown, CustomSnackbar };
+export { CustomButton, CustomCard, CustomSpinner, CustomInputText, CustomDropdown, CustomSnackbar, CustomSidebar };

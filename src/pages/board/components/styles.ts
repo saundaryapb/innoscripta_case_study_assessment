@@ -231,4 +231,80 @@ export const boardStyles: { [key: string]: CSSProperties } = {
       fontSize: '18px',
       color: '#666',
    },
+
+   // Sidebar Styles
+   sidebar: {
+      marginTop: '20px',
+   },
+
+   sidebarTitle: {
+      fontSize: '16px',
+      fontWeight: 600,
+      color: 'var(--color-gray-900, #111827)',
+      marginBottom: '16px',
+   },
+
+   // Recently Visited Issues Styles
+   recentlyVisitedContainer: {
+      marginBottom: '24px',
+   },
+
+   recentlyVisitedTitle: {
+      fontSize: '16px',
+      fontWeight: 600,
+      color: 'var(--color-gray-900, #111827)',
+      marginBottom: '12px',
+      margin: 0,
+   },
+
+   recentlyVisitedList: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+   },
+
+   recentlyVisitedItem: {
+      padding: '12px',
+      borderRadius: '6px',
+   },
+
+   recentlyVisitedItemHeader: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: '4px',
+   },
+
+   recentlyVisitedItemId: {
+      fontSize: '12px',
+      fontWeight: 600,
+      color: 'var(--color-primary, #3b82f6)',
+   },
+
+   recentlyVisitedItemTime: {
+      fontSize: '11px',
+      color: 'var(--color-gray-500, #6b7280)',
+   },
+
+   recentlyVisitedItemTitle: {
+      fontSize: '14px',
+      fontWeight: 500,
+      color: 'var(--color-gray-900, #111827)',
+      margin: 0,
+      lineHeight: 1.3,
+   },
+
+   recentlyVisitedItemStatus: {
+      fontSize: '11px',
+      color: 'var(--color-gray-600, #4b5563)',
+      marginTop: '4px',
+      textTransform: 'capitalize',
+   },
+
+   recentlyVisitedEmpty: {
+      padding: '16px',
+      textAlign: 'center',
+      color: 'var(--color-gray-500, #6b7280)',
+      fontSize: '14px',
+   },
 };

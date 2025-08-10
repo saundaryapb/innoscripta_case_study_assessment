@@ -183,3 +183,58 @@ export const getCardStyleWithRole = (baseStyle: any, isDragging: boolean, transf
       cursor: isAdminUser(user) ? 'grab' : 'default',
    };
 };
+
+const VISITED_ISSUES_KEY = 'recentlyVisitedIssues';
+const MAX_VISITED_ISSUES = 5;
+
+export interface VisitedIssue {
+   id: number;
+   title: string;
+   status: string;
+   visitedAt: string;
+}
+
+export const getVisitedIssues = (): VisitedIssue[] => {
+   try {
+      const stored = localStorage.getItem(VISITED_ISSUES_KEY);
+      return stored ? JSON.parse(stored) : [];
+   } catch (error) {
+      console.error('Error retrieving visited issues:', error);
+      return [];
+   }
+};
+
+export const addVisitedIssue = (issue: { id: number; title: string; status: string }): void => {
+   try {
+      const visitedIssues = getVisitedIssues();
+      const newVisitedIssue: VisitedIssue = {
+         ...issue,
+         visitedAt: new Date().toISOString(),
+      };
+      const filteredIssues = visitedIssues.filter((visited) => visited.id !== issue.id);
+      const updatedIssues = [newVisitedIssue, ...filteredIssues].slice(0, MAX_VISITED_ISSUES);
+      localStorage.setItem(VISITED_ISSUES_KEY, JSON.stringify(updatedIssues));
+   } catch (error) {
+      console.error('Error storing visited issue:', error);
+   }
+};
+
+export const formatVisitedTime = (visitedAt: string): string => {
+   try {
+      const visitedDate = new Date(visitedAt);
+      const now = new Date();
+      const diffInMinutes = Math.floor((now.getTime() - visitedDate.getTime()) / (1000 * 60));
+
+      if (diffInMinutes < 1) return 'Just now';
+      if (diffInMinutes < 60) return `${diffInMinutes}m ago`;
+
+      const diffInHours = Math.floor(diffInMinutes / 60);
+      if (diffInHours < 24) return `${diffInHours}h ago`;
+
+      const diffInDays = Math.floor(diffInHours / 24);
+      return `${diffInDays}d ago`;
+   } catch (error) {
+      console.error('Error formatting visited time:', error);
+      return 'Unknown';
+   }
+};

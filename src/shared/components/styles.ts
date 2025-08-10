@@ -167,3 +167,95 @@ export const snackbarStyles: { [key: string]: CSSProperties } = {
       opacity: 1,
    },
 };
+
+export const sidebarStyles: { [key: string]: CSSProperties } = {
+   overlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      zIndex: 1200,
+      opacity: 0,
+      visibility: 'hidden',
+      transition: 'opacity 0.3s ease-in-out, visibility 0.3s ease-in-out',
+      margin: 0,
+      padding: 0,
+   },
+
+   overlayOpen: {
+      opacity: 1,
+      visibility: 'visible',
+   },
+
+   container: {
+      position: 'fixed',
+      top: 0,
+      bottom: 0,
+      width: '320px',
+      backgroundColor: 'var(--color-white, #ffffff)',
+      boxShadow: '2px 0 8px rgba(0, 0, 0, 0.15)',
+      zIndex: 1300,
+      display: 'flex',
+      flexDirection: 'column',
+      transition: 'transform 0.3s ease-in-out',
+      margin: 0,
+      padding: 0,
+   },
+
+   containerRight: {
+      right: 0,
+      transform: 'translateX(100%)',
+   },
+
+   containerOpen: {
+      transform: 'translateX(0)',
+   },
+
+   header: {
+      padding: '20px 24px',
+      borderBottom: '1px solid var(--color-gray-200, #e5e7eb)',
+      backgroundColor: 'var(--color-gray-50, #f9fafb)',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      minHeight: '60px',
+      margin: 0,
+      position: 'sticky',
+      top: 0,
+      zIndex: 1,
+   },
+
+   title: {
+      fontSize: '18px',
+      fontWeight: 600,
+      color: 'var(--color-gray-900, #111827)',
+      margin: 0,
+   },
+
+   closeButton: {
+      background: 'none',
+      border: 'none',
+      color: 'var(--color-gray-500, #6b7280)',
+      cursor: 'pointer',
+      padding: '8px',
+      borderRadius: '4px',
+      fontSize: '16px',
+      lineHeight: 1,
+      transition: 'color 0.2s ease-in-out, background-color 0.2s ease-in-out',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: '32px',
+      height: '32px',
+   },
+
+   content: {
+      flex: 1,
+      padding: '24px',
+      overflowY: 'auto',
+      border: 'none',
+      boxShadow: 'none',
+   },
+};
