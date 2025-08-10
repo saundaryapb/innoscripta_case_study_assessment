@@ -7,8 +7,10 @@ import {
    getPriorityColor,
    getNextStatusFromStatusString,
    getColumnStyle,
-   getCardStyle,
    formatCreatedDate,
+   isAdminUser,
+   getDragProps,
+   getCardStyleWithRole,
 } from '../helpers';
 import { boardStyles } from './styles';
 
@@ -22,6 +24,7 @@ interface ContentData {
 
 interface ContentProps {
    data?: ContentData;
+   user: any;
    handleChange: (actionType: string, payload?: any) => void;
 }
 
@@ -29,8 +32,9 @@ const DroppableColumn: React.FC<{
    id: string;
    title: string;
    issues: Issue[];
+   user: any;
    handleChange: (actionType: string, payload?: any) => void;
-}> = ({ id, title, issues, handleChange }) => {
+}> = ({ id, title, issues, user, handleChange }) => {
    const { isOver, setNodeRef } = useDroppable({
       id,
    });
@@ -45,7 +49,7 @@ const DroppableColumn: React.FC<{
 
          <div style={boardStyles.kanbanColumnContent}>
             {issues.map((issue) => (
-               <IssueCard key={issue.id} issue={issue} handleChange={handleChange} />
+               <IssueCard key={issue.id} user={user} issue={issue} handleChange={handleChange} />
             ))}
          </div>
       </div>
@@ -54,14 +58,16 @@ const DroppableColumn: React.FC<{
 
 const IssueCard: React.FC<{
    issue: Issue;
+   user: any;
    handleChange: (actionType: string, payload?: any) => void;
-}> = ({ issue, handleChange }) => {
+}> = ({ issue, user, handleChange }) => {
    const { attributes, listeners, setNodeRef, transform, isDragging } = useDraggable({
       id: issue.id,
    });
 
    const nextStatus = getNextStatusFromStatusString(issue.status);
-   const cardStyle = getCardStyle(boardStyles.issueCard, isDragging, transform);
+   const dragProps = getDragProps(user, listeners, attributes);
+   const cardStyleWithRole = getCardStyleWithRole(boardStyles.issueCard, isDragging, transform, user);
 
    const handleMoveClick = () => {
       if (nextStatus) {
@@ -70,7 +76,7 @@ const IssueCard: React.FC<{
    };
 
    return (
-      <div ref={setNodeRef} style={cardStyle} {...listeners} {...attributes}>
+      <div ref={setNodeRef} style={cardStyleWithRole} {...dragProps}>
          <CustomCard>
             <div style={boardStyles.issueHeader}>
                <span style={boardStyles.issueId}>#{issue.id}</span>
@@ -101,7 +107,7 @@ const IssueCard: React.FC<{
                </div>
             </div>
 
-            {nextStatus && (
+            {nextStatus && isAdminUser(user) && (
                <CustomButton
                   handleClick={handleMoveClick}
                   style={boardStyles.moveButton}
@@ -115,7 +121,7 @@ const IssueCard: React.FC<{
    );
 };
 
-const Content: React.FC<ContentProps> = ({ data, handleChange }) => {
+const Content: React.FC<ContentProps> = ({ data, user, handleChange }) => {
    if (!data) {
       return <div style={boardStyles.loadingContainer}>Loading Kanban Board...</div>;
    }
@@ -141,6 +147,7 @@ const Content: React.FC<ContentProps> = ({ data, handleChange }) => {
                      id={column.id}
                      title={column.title}
                      issues={column.issues}
+                     user={user}
                      handleChange={handleChange}
                   />
                ))}

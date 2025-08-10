@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useBoardContext } from '../context';
 import { mockFetchIssues } from '../../../utils/api';
 import { BOARD_ACTION_TYPES, API_CONFIG, BOARD_HANDLE_CHANGE_ACTIONS } from '../constants';
@@ -15,6 +15,15 @@ const Content: React.FC = () => {
    const contentDataRef = useRef<Issue[]>([]);
    const intervalRef = useRef<NodeJS.Timeout | null>(null);
    const batchIndexRef = useRef(0);
+
+   const user = useMemo(() => {
+      const userDetails = localStorage.getItem('userData');
+      try {
+         return userDetails ? JSON.parse(userDetails).user : null;
+      } catch {
+         return null;
+      }
+   }, []);
 
    // Step 3: As soon as contentData changes, structure it by status
    useEffect(() => {
@@ -127,7 +136,7 @@ const Content: React.FC = () => {
       [contentData, dispatch]
    );
 
-   return <ContentComponent data={data?.filteredIssues} handleChange={handleChange} />;
+   return <ContentComponent data={data?.filteredIssues} handleChange={handleChange} user={user} />;
 };
 
 export default Content;

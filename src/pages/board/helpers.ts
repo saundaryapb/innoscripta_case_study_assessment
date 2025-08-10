@@ -1,5 +1,5 @@
 import { Issue } from '../../types';
-import { IssueStatus, Priority, PriorityColor } from '../../shared/constants';
+import { IssueStatus, Priority, PriorityColor, RoleTypes } from '../../shared/constants';
 import { KanbanColumnId } from './constants';
 
 export const createOptionsFromEnum = (enumObject: Record<string, string>) => {
@@ -103,4 +103,19 @@ export const getCardStyle = (baseStyle: any, isDragging: boolean, transform: any
 
 export const formatCreatedDate = (dateString: string): string => {
    return new Date(dateString).toLocaleDateString();
+};
+
+export const isAdminUser = (user: any): boolean => {
+   return user?.role === RoleTypes.ADMIN;
+};
+
+export const getDragProps = (user: any, listeners: any, attributes: any) => {
+   return isAdminUser(user) ? { ...listeners, ...attributes } : {};
+};
+
+export const getCardStyleWithRole = (baseStyle: any, isDragging: boolean, transform: any, user: any) => {
+   return {
+      ...getCardStyle(baseStyle, isDragging, transform),
+      cursor: isAdminUser(user) ? 'grab' : 'default',
+   };
 };
