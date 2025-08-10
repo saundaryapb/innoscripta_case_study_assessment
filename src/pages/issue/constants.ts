@@ -4,11 +4,11 @@ export enum ISSUE_HANDLE_CHANGE_ACTIONS {
 }
 
 export enum ISSUE_STATUS {
-   BACKLOG = 'backlog',
-   TODO = 'todo',
-   IN_PROGRESS = 'inProgress',
-   IN_REVIEW = 'inReview',
-   DONE = 'done',
+   BACKLOG = 'Backlog',
+   TODO = 'Todo',
+   IN_PROGRESS = 'In Progress',
+   IN_REVIEW = 'In Review',
+   DONE = 'Done',
 }
 
 export const ISSUE_DETAILS_CONFIG = [

@@ -24,6 +24,7 @@ const Content: React.FC = () => {
    const contentDataRef = useRef<Issue[]>([]);
    const intervalRef = useRef<NodeJS.Timeout | null>(null);
    const batchIndexRef = useRef(0);
+   const hasFetchedRef = useRef(false); // Prevents duplicate API calls when navigating back from issue detail page
    const [showUndo, setShowUndo] = useState(false);
    const [undoData, setUndoData] = useState<{
       issue: Issue;
@@ -58,7 +59,19 @@ const Content: React.FC = () => {
       const nextBatch = allIssuesRef.current.slice(start, end);
 
       if (nextBatch.length > 0) {
-         reduxDispatch(setContentData([...contentDataRef.current, ...nextBatch]));
+         // Use ref for latest data to avoid stale closure issues during polling
+         // Scenarios: drag/drop updates, mark as resolved, or any manual status changes
+         const currentContentData = contentDataRef.current;
+
+         // Filter out any issues that already exist to prevent duplicates
+         const newIssues = nextBatch.filter(
+            (newIssue) => !currentContentData.some((existing) => existing.id === newIssue.id)
+         );
+
+         if (newIssues.length > 0) {
+            reduxDispatch(setContentData([...currentContentData, ...newIssues]));
+         }
+
          batchIndexRef.current += 1;
       }
 
@@ -72,11 +85,17 @@ const Content: React.FC = () => {
 
    // Step 1: Fetch issues (initially 5 and then 5 every 5 seconds)
    useEffect(() => {
+      // Don't fetch if we have already started the fetching process
+      if (hasFetchedRef.current) {
+         return;
+      }
+
       let isMounted = true;
       mockFetchIssues().then((fetchedData) => {
          if (!isMounted) return;
 
          allIssuesRef.current = fetchedData;
+         hasFetchedRef.current = true;
 
          // Load first batch immediately
          loadNextBatch();
