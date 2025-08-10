@@ -4,7 +4,7 @@ import { useBoardContext } from '../context';
 import { mockFetchIssues } from '../../../utils/api';
 import { BOARD_ACTION_TYPES, API_CONFIG, BOARD_HANDLE_CHANGE_ACTIONS } from '../constants';
 import { Issue } from '../../../types';
-import { structureDataByStatus, getStatusFromContainerId } from '../helpers';
+import { getStatusFromContainerId, filterAndStructureIssues } from '../helpers';
 import { ContentComponent } from '../components';
 
 const Content: React.FC = () => {
@@ -33,17 +33,21 @@ const Content: React.FC = () => {
       }
    }, []);
 
-   // Step 3: As soon as contentData changes, structure it by status
+   // Step 3: As soon as contentData changes, structure it by status with filters applied
    useEffect(() => {
-      const data = (contentData as unknown as Issue[]) ?? [];
-      contentDataRef.current = data;
-      const structuredData = structureDataByStatus(data);
+      const issuesData = (contentData as unknown as Issue[]) ?? [];
+      contentDataRef.current = issuesData;
+
+      const { issueSearched = '', selectedAssignees = [], selectedSeverities = [] } = data;
+
+      const structuredData = filterAndStructureIssues(issuesData, issueSearched, selectedAssignees, selectedSeverities);
+
       dispatch({
          type: BOARD_ACTION_TYPES.UPDATE_DATA,
          key: 'filteredIssues',
          payload: structuredData,
       });
-   }, [contentData]);
+   }, [contentData, data.issueSearched, data.selectedAssignees, data.selectedSeverities, dispatch]);
 
    // Step 2: Load next batch of issues and append to contentData
    const loadNextBatch = useCallback(() => {

@@ -40,6 +40,29 @@ export const sortIssuesByPriority = (issues: Issue[]): Issue[] => {
    });
 };
 
+export const filterIssues = (
+   issues: Issue[],
+   searchTerm: string = '',
+   selectedAssignees: string[] = [],
+   selectedSeverities: string[] = []
+): Issue[] => {
+   return issues.filter((issue) => {
+      // Search by title or tags (case-insensitive)
+      const matchesSearch =
+         searchTerm === '' ||
+         issue.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+         issue.tags.some((tag) => tag.toLowerCase().includes(searchTerm.toLowerCase()));
+
+      // Filter by assignee
+      const matchesAssignee = selectedAssignees.length === 0 || selectedAssignees.includes(issue.assignee);
+
+      // Filter by priority (high, medium, low)
+      const matchesPriority = selectedSeverities.length === 0 || selectedSeverities.includes(issue.priority);
+
+      return matchesSearch && matchesAssignee && matchesPriority;
+   });
+};
+
 export const structureDataByStatus = (issues: Issue[]) => {
    return {
       backlog: sortIssuesByPriority(issues.filter((issue) => issue.status === IssueStatus.BACKLOG)),
@@ -48,6 +71,16 @@ export const structureDataByStatus = (issues: Issue[]) => {
       inReview: sortIssuesByPriority(issues.filter((issue) => issue.status === IssueStatus.IN_REVIEW)),
       done: sortIssuesByPriority(issues.filter((issue) => issue.status === IssueStatus.DONE)),
    };
+};
+
+export const filterAndStructureIssues = (
+   issues: Issue[],
+   searchTerm: string = '',
+   selectedAssignees: string[] = [],
+   selectedSeverities: string[] = []
+) => {
+   const filteredIssues = filterIssues(issues, searchTerm, selectedAssignees, selectedSeverities);
+   return structureDataByStatus(filteredIssues);
 };
 
 export const getNextBatchIndex = (currentIndex: number, totalLength: number) => {
