@@ -10,6 +10,7 @@ export interface Issue {
    reviewer: string;
    estimatedHours: number;
    tags: string[];
+   userDefinedRank?: number;
 }
 
 export interface User {

@@ -9,13 +9,44 @@ export const createOptionsFromEnum = (enumObject: Record<string, string>) => {
    }));
 };
 
+export const calculateDaysSinceCreated = (createdAt: string): number => {
+   const createdDate = new Date(createdAt);
+   const currentDate = new Date();
+   const timeDifference = currentDate.getTime() - createdDate.getTime();
+   return Math.floor(timeDifference / (1000 * 3600 * 24));
+};
+
+export const calculatePriorityScore = (issue: Issue): number => {
+   const severity = issue.severity;
+   const daysSinceCreated = calculateDaysSinceCreated(issue.createdAt);
+   const userDefinedRank = issue.userDefinedRank || 0;
+
+   return severity * 10 + daysSinceCreated * -1 + userDefinedRank;
+};
+
+export const sortIssuesByPriority = (issues: Issue[]): Issue[] => {
+   return [...issues].sort((a, b) => {
+      const scoreA = calculatePriorityScore(a);
+      const scoreB = calculatePriorityScore(b);
+
+      if (scoreA !== scoreB) {
+         return scoreB - scoreA; // Higher score first
+      }
+
+      // If scores match, newer issues should appear higher
+      const dateA = new Date(a.createdAt).getTime();
+      const dateB = new Date(b.createdAt).getTime();
+      return dateB - dateA; // Newer date first
+   });
+};
+
 export const structureDataByStatus = (issues: Issue[]) => {
    return {
-      backlog: issues.filter((issue) => issue.status === IssueStatus.BACKLOG),
-      todo: issues.filter((issue) => issue.status === IssueStatus.TODO),
-      inProgress: issues.filter((issue) => issue.status === IssueStatus.IN_PROGRESS),
-      inReview: issues.filter((issue) => issue.status === IssueStatus.IN_REVIEW),
-      done: issues.filter((issue) => issue.status === IssueStatus.DONE),
+      backlog: sortIssuesByPriority(issues.filter((issue) => issue.status === IssueStatus.BACKLOG)),
+      todo: sortIssuesByPriority(issues.filter((issue) => issue.status === IssueStatus.TODO)),
+      inProgress: sortIssuesByPriority(issues.filter((issue) => issue.status === IssueStatus.IN_PROGRESS)),
+      inReview: sortIssuesByPriority(issues.filter((issue) => issue.status === IssueStatus.IN_REVIEW)),
+      done: sortIssuesByPriority(issues.filter((issue) => issue.status === IssueStatus.DONE)),
    };
 };
 
