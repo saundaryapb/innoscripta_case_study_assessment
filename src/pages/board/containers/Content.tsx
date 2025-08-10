@@ -1,16 +1,22 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { setContentData } from '../actions';
 import { useBoardContext } from '../context';
 import { mockFetchIssues } from '../../../utils/api';
 import { BOARD_ACTION_TYPES, API_CONFIG, BOARD_HANDLE_CHANGE_ACTIONS } from '../constants';
 import { Issue } from '../../../types';
 import { getStatusFromContainerId, filterAndStructureIssues } from '../helpers';
 import { ContentComponent } from '../components';
+import { useCustomStoreSelector } from '../../../hooks/useCustomStoreSelector';
 
 const Content: React.FC = () => {
-   const { state, dispatch } = useBoardContext();
+   const { state, dispatch: contextDispatch } = useBoardContext();
    const { data } = state;
-   const { contentData } = data;
+   const reduxDispatch = useDispatch();
+   const boardData = useCustomStoreSelector('board');
+   const contentData = useMemo(() => boardData.contentData || [], [boardData.contentData]);
+
    const navigate = useNavigate();
 
    const allIssuesRef = useRef<Issue[]>([]);
@@ -42,12 +48,12 @@ const Content: React.FC = () => {
 
       const structuredData = filterAndStructureIssues(issuesData, issueSearched, selectedAssignees, selectedSeverities);
 
-      dispatch({
+      contextDispatch({
          type: BOARD_ACTION_TYPES.UPDATE_DATA,
          key: 'filteredIssues',
          payload: structuredData,
       });
-   }, [contentData, data.issueSearched, data.selectedAssignees, data.selectedSeverities, dispatch]);
+   }, [contentData, data.issueSearched, data.selectedAssignees, data.selectedSeverities, contextDispatch]);
 
    // Step 2: Load next batch of issues and append to contentData
    const loadNextBatch = useCallback(() => {
@@ -56,11 +62,7 @@ const Content: React.FC = () => {
       const nextBatch = allIssuesRef.current.slice(start, end);
 
       if (nextBatch.length > 0) {
-         dispatch({
-            type: BOARD_ACTION_TYPES.UPDATE_DATA,
-            key: 'contentData',
-            payload: [...contentDataRef.current, ...nextBatch],
-         });
+         reduxDispatch(setContentData([...contentDataRef.current, ...nextBatch]));
          batchIndexRef.current += 1;
       }
 
@@ -70,7 +72,7 @@ const Content: React.FC = () => {
             intervalRef.current = null;
          }
       }
-   }, [dispatch]);
+   }, [reduxDispatch]);
 
    // Step 1: Fetch issues (initially 5 and then 5 every 5 seconds)
    useEffect(() => {
@@ -123,11 +125,7 @@ const Content: React.FC = () => {
                );
 
                // Dispatch updated contentData
-               dispatch({
-                  type: BOARD_ACTION_TYPES.UPDATE_DATA,
-                  key: 'contentData',
-                  payload: updatedDataFromDrag,
-               });
+               reduxDispatch(setContentData(updatedDataFromDrag));
                setUndoData({
                   issue: issueToMove,
                   previousStatus,
@@ -150,11 +148,7 @@ const Content: React.FC = () => {
                );
 
                // Dispatch updated contentData
-               dispatch({
-                  type: BOARD_ACTION_TYPES.UPDATE_DATA,
-                  key: 'contentData',
-                  payload: updatedDataFromMove,
-               });
+               reduxDispatch(setContentData(updatedDataFromMove));
                setUndoData({
                   issue: issueToMoveButton,
                   previousStatus: previousMoveStatus,
@@ -169,11 +163,7 @@ const Content: React.FC = () => {
                      issue.id === undoData.issue.id ? { ...issue, status: undoData.previousStatus } : issue
                   );
 
-                  dispatch({
-                     type: BOARD_ACTION_TYPES.UPDATE_DATA,
-                     key: 'contentData',
-                     payload: revertedData,
-                  });
+                  reduxDispatch(setContentData(revertedData));
                   setShowUndo(false);
                   setUndoData(null);
                }
@@ -193,7 +183,7 @@ const Content: React.FC = () => {
                console.warn('Unknown action type:', actionType);
          }
       },
-      [contentData, dispatch, navigate, undoData]
+      [contentData, reduxDispatch, navigate, undoData]
    );
 
    return (

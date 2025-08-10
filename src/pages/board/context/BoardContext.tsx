@@ -15,7 +15,6 @@ interface BoardData {
    issueSearched?: string;
    selectedAssignees?: string[];
    selectedSeverities?: string[];
-   contentData?: string[];
    filteredIssues?: FilteredIssues;
 }
 
@@ -39,7 +38,6 @@ const initialState: BoardState = {
       issueSearched: '',
       selectedAssignees: [],
       selectedSeverities: [],
-      contentData: [],
       filteredIssues: {
          backlog: [],
          todo: [],
