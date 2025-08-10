@@ -1,7 +1,7 @@
 import React from 'react';
 import { DndContext, DragEndEvent, closestCenter, useDraggable, useDroppable } from '@dnd-kit/core';
 import { Issue } from '../../../types';
-import { CustomButton, CustomCard } from '../../../shared/components';
+import { CustomButton, CustomCard, CustomSnackbar } from '../../../shared/components';
 import { KANBAN_COLUMNS, BOARD_HANDLE_CHANGE_ACTIONS } from '../constants';
 import {
    getPriorityColor,
@@ -26,6 +26,8 @@ interface ContentProps {
    data?: ContentData;
    user: any;
    handleChange: (actionType: string, payload?: any) => void;
+   showUndo?: boolean;
+   undoMessage?: string;
 }
 
 const DroppableColumn: React.FC<{
@@ -129,7 +131,7 @@ const IssueCard: React.FC<{
    );
 };
 
-const Content: React.FC<ContentProps> = ({ data, user, handleChange }) => {
+const Content: React.FC<ContentProps> = ({ data, user, handleChange, showUndo = false, undoMessage = '' }) => {
    if (!data) {
       return <div style={boardStyles.loadingContainer}>Loading Kanban Board...</div>;
    }
@@ -161,6 +163,26 @@ const Content: React.FC<ContentProps> = ({ data, user, handleChange }) => {
                ))}
             </div>
          </DndContext>
+
+         {showUndo && (
+            <CustomSnackbar
+               open={showUndo}
+               message={undoMessage}
+               handleChange={(actionOrOpen: any) => {
+                  if (typeof actionOrOpen === 'boolean') {
+                     if (!actionOrOpen) {
+                        handleChange(BOARD_HANDLE_CHANGE_ACTIONS.CLOSE_UNDO_SNACKBAR);
+                     }
+                  } else {
+                     handleChange(actionOrOpen);
+                  }
+               }}
+               action={{
+                  label: 'Undo',
+                  type: BOARD_HANDLE_CHANGE_ACTIONS.UNDO_ISSUE,
+               }}
+            />
+         )}
       </div>
    );
 };

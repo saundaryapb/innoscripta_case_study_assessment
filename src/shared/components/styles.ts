@@ -121,3 +121,49 @@ export const dropdownStyles: { [key: string]: CSSProperties } = {
       color: 'var(--color-error, #ef4444)',
    },
 };
+
+export const snackbarStyles: { [key: string]: CSSProperties } = {
+   container: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '12px',
+      minWidth: '288px',
+      maxWidth: '500px',
+      padding: '12px 16px',
+      borderRadius: '4px',
+      boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1), 0 1px 3px rgba(0, 0, 0, 0.08)',
+      fontSize: '14px',
+      fontFamily: 'inherit',
+      fontWeight: 500,
+      backgroundColor: 'var(--color-primary, #3b82f6)',
+      color: 'var(--color-white, #ffffff)',
+      position: 'fixed',
+      bottom: '20px',
+      left: '50%',
+      transform: 'translateX(-50%)',
+      zIndex: 1300,
+   },
+
+   message: {
+      flex: 1,
+      margin: 0,
+      lineHeight: '1.4',
+   },
+
+   closeButton: {
+      background: 'none',
+      border: 'none',
+      color: 'inherit',
+      cursor: 'pointer',
+      padding: '4px',
+      borderRadius: '2px',
+      fontSize: '16px',
+      fontWeight: 'bold',
+      opacity: 0.8,
+      transition: 'opacity 0.2s ease-in-out',
+   },
+
+   closeButtonHover: {
+      opacity: 1,
+   },
+};

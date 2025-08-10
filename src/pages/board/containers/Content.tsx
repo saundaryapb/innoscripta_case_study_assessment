@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useBoardContext } from '../context';
 import { mockFetchIssues } from '../../../utils/api';
@@ -17,6 +17,12 @@ const Content: React.FC = () => {
    const contentDataRef = useRef<Issue[]>([]);
    const intervalRef = useRef<NodeJS.Timeout | null>(null);
    const batchIndexRef = useRef(0);
+   const [showUndo, setShowUndo] = useState(false);
+   const [undoData, setUndoData] = useState<{
+      issue: Issue;
+      previousStatus: string;
+      message: string;
+   } | null>(null);
 
    const user = useMemo(() => {
       const userDetails = localStorage.getItem('userData');
@@ -29,7 +35,7 @@ const Content: React.FC = () => {
 
    // Step 3: As soon as contentData changes, structure it by status
    useEffect(() => {
-      const data = (contentData as any[]) ?? [];
+      const data = (contentData as unknown as Issue[]) ?? [];
       contentDataRef.current = data;
       const structuredData = structureDataByStatus(data);
       dispatch({
@@ -87,7 +93,7 @@ const Content: React.FC = () => {
 
    const handleChange = useCallback(
       (actionType: string, payload?: any) => {
-         const currentData = (contentData as any[]) ?? [];
+         const currentData = (contentData as unknown as Issue[]) ?? [];
 
          switch (actionType) {
             case BOARD_HANDLE_CHANGE_ACTIONS.DRAG_END:
@@ -101,6 +107,12 @@ const Content: React.FC = () => {
 
                if (!newStatus) return;
 
+               // Find the issue to track previous state
+               const issueToMove = currentData.find((issue: Issue) => issue.id === issueId);
+               if (!issueToMove) return;
+
+               const previousStatus = issueToMove.status;
+
                // Update the issue status in contentData
                const updatedDataFromDrag = currentData.map((issue: Issue) =>
                   issue.id === issueId ? { ...issue, status: newStatus } : issue
@@ -112,11 +124,21 @@ const Content: React.FC = () => {
                   key: 'contentData',
                   payload: updatedDataFromDrag,
                });
+               setUndoData({
+                  issue: issueToMove,
+                  previousStatus,
+                  message: `Moved issue #${issueId} to ${newStatus}`,
+               });
+               setShowUndo(true);
                break;
 
             case BOARD_HANDLE_CHANGE_ACTIONS.MOVE_ISSUE:
                // Handle button-based move
                const { issueId: moveIssueId, newStatus: moveNewStatus } = payload;
+               const issueToMoveButton = currentData.find((issue: Issue) => issue.id === moveIssueId);
+               if (!issueToMoveButton) return;
+
+               const previousMoveStatus = issueToMoveButton.status;
 
                // Update the issue status in contentData
                const updatedDataFromMove = currentData.map((issue: Issue) =>
@@ -129,6 +151,33 @@ const Content: React.FC = () => {
                   key: 'contentData',
                   payload: updatedDataFromMove,
                });
+               setUndoData({
+                  issue: issueToMoveButton,
+                  previousStatus: previousMoveStatus,
+                  message: `Moved issue #${moveIssueId} to ${moveNewStatus}`,
+               });
+               setShowUndo(true);
+               break;
+
+            case BOARD_HANDLE_CHANGE_ACTIONS.UNDO_ISSUE:
+               if (undoData) {
+                  const revertedData = currentData.map((issue: Issue) =>
+                     issue.id === undoData.issue.id ? { ...issue, status: undoData.previousStatus } : issue
+                  );
+
+                  dispatch({
+                     type: BOARD_ACTION_TYPES.UPDATE_DATA,
+                     key: 'contentData',
+                     payload: revertedData,
+                  });
+                  setShowUndo(false);
+                  setUndoData(null);
+               }
+               break;
+
+            case BOARD_HANDLE_CHANGE_ACTIONS.CLOSE_UNDO_SNACKBAR:
+               setShowUndo(false);
+               setUndoData(null);
                break;
 
             case BOARD_HANDLE_CHANGE_ACTIONS.OPEN_ISSUE:
@@ -140,10 +189,18 @@ const Content: React.FC = () => {
                console.warn('Unknown action type:', actionType);
          }
       },
-      [contentData, dispatch, navigate]
+      [contentData, dispatch, navigate, undoData]
    );
 
-   return <ContentComponent data={data?.filteredIssues} handleChange={handleChange} user={user} />;
+   return (
+      <ContentComponent
+         data={data?.filteredIssues}
+         handleChange={handleChange}
+         user={user}
+         showUndo={showUndo}
+         undoMessage={undoData?.message || ''}
+      />
+   );
 };
 
 export default Content;
