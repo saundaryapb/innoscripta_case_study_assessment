@@ -1,17 +1,19 @@
 import React from 'react';
 import { Issue as IssueType } from '../../../types';
 import { CustomButton, CustomCard } from '../../../shared/components';
-import { ISSUE_HANDLE_CHANGE_ACTIONS } from '../constants';
-import { getPriorityColor, formatDate, getPriorityLabel } from '../helpers';
+import { ISSUE_HANDLE_CHANGE_ACTIONS, ISSUE_STATUS } from '../constants';
+import { getPriorityColor, getPriorityLabel, generateIssueDetails } from '../helpers';
+import { isAdminUser } from '../../board/helpers';
 import { issueStyles } from './styles';
 
 interface IssueProps {
    data?: IssueType;
    issueId?: string;
+   user?: any;
    handleChange: (actionType: string, payload?: any) => void;
 }
 
-const Issue: React.FC<IssueProps> = ({ data, issueId, handleChange }) => {
+const Issue: React.FC<IssueProps> = ({ data, issueId, user, handleChange }) => {
    if (!data) {
       return (
          <div style={issueStyles.notFoundContainer}>
@@ -28,13 +30,7 @@ const Issue: React.FC<IssueProps> = ({ data, issueId, handleChange }) => {
       </div>
    );
 
-   const issueDetails = [
-      { title: 'Assignee', value: `@${data.assignee}` },
-      { title: 'Reviewer', value: `@${data.reviewer}` },
-      { title: 'Severity', value: data.severity },
-      { title: 'Estimated Hours', value: `${data.estimatedHours}h` },
-      { title: 'Created', value: formatDate(data.createdAt) },
-   ];
+   const issueDetails = generateIssueDetails(data);
 
    return (
       <div style={issueStyles.container}>
@@ -83,6 +79,18 @@ const Issue: React.FC<IssueProps> = ({ data, issueId, handleChange }) => {
                   ))}
                </div>
             </div>
+
+            {isAdminUser(user) && data.status !== ISSUE_STATUS.DONE && (
+               <div style={{ marginTop: '24px', display: 'flex', justifyContent: 'center' }}>
+                  <CustomButton
+                     handleClick={() =>
+                        handleChange(ISSUE_HANDLE_CHANGE_ACTIONS.MARK_AS_RESOLVED, { issueId: data.id })
+                     }
+                     variant="primary"
+                     label="Mark as Resolved"
+                  />
+               </div>
+            )}
          </CustomCard>
       </div>
    );

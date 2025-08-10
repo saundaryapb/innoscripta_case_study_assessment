@@ -9,6 +9,7 @@ import { Issue } from '../../../types';
 import { getStatusFromContainerId, filterAndStructureIssues } from '../helpers';
 import { ContentComponent } from '../components';
 import { useCustomStoreSelector } from '../../../hooks/useCustomStoreSelector';
+import { getUserFromStorage } from '../../../shared/helpers';
 
 const Content: React.FC = () => {
    const { state, dispatch: contextDispatch } = useBoardContext();
@@ -30,14 +31,7 @@ const Content: React.FC = () => {
       message: string;
    } | null>(null);
 
-   const user = useMemo(() => {
-      const userDetails = localStorage.getItem('userData');
-      try {
-         return userDetails ? JSON.parse(userDetails).user : null;
-      } catch {
-         return null;
-      }
-   }, []);
+   const user = useMemo(() => getUserFromStorage(), []);
 
    // Step 3: As soon as contentData changes, structure it by status with filters applied
    useEffect(() => {
