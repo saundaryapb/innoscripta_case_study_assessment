@@ -13,7 +13,7 @@ const Navigation: FC = () => {
    const isLoaderVisible = sharedState.loader.isVisible;
 
    useEffect(() => {
-      if (loginState.isAuth) {
+      if (loginState.isAuth && !localStorage.getItem('isAuth')) {
          navigate(ROUTE_COLLECTION.BOARD);
          localStorage.setItem('isAuth', 'true');
          localStorage.setItem('userData', JSON.stringify(loginState.data || {}));

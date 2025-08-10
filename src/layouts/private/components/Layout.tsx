@@ -17,7 +17,8 @@ const Layout: React.FC<LayoutProps> = ({ routes, data, handleChange }) => {
             {routes.map((route) => (
                <Route key={route.path} path={route.path} element={route.component} />
             ))}
-            <Route path="*" element={<Navigate to={routes[0]?.path || '/board'} replace />} />
+            <Route path="/" element={<Navigate to="/board" replace />} />
+            <Route path="*" element={<Navigate to="/board" replace />} />
          </Routes>
       </div>
    );

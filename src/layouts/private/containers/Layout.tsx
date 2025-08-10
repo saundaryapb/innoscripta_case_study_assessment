@@ -27,6 +27,7 @@ const Layout: FC = () => {
                localStorage.clear();
                navigate('/');
                logoutUser()(dispatch);
+               setTimeout(() => window.location.reload(), 500);
                break;
             default:
                console.log('Unknown action');
